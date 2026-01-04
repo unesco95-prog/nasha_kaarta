@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Наша карта</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+
+<!-- Leaflet CDN -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-heart">❤️</div>
+  <div class="splash-text">Я сделал это для тебя</div>
+</div>
+
+<div id="map"></div>
+
+<div id="overlay"></div>
+<div id="place-card">
+  <button id="close-card">×</button>
+  <h2 id="card-title"></h2>
+  <div id="card-date"></div>
+  <img id="card-photo"/>
+  <p id="card-text"></p>
+</div>
+
+<!-- Массив places с base64 фото -->
+<script src="photos_base64.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const splash = document.getElementById("splash");
+    const mapDiv = document.getElementById("map");
+
+    function initializeMap(places) {
+        const map = L.map('map').setView([59.9386, 30.3141], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
+        const heartIcon = L.divIcon({ className: 'heart-icon', html: '❤️', iconSize: [30, 30] });
+
+        places.forEach(place => {
+            L.marker([place.lat, place.lng], { icon: heartIcon })
+             .addTo(map)
+             .on('click', () => openCard(place));
+        });
+
+        function openCard(place) {
+            document.getElementById('card-title').textContent = place.title;
+            document.getElementById('card-date').textContent = place.date;
+
+            const photo = document.getElementById('card-photo');
+            if(place.photo){ photo.src = place.photo; photo.style.display='block'; } else { photo.style.display='none'; }
+
+            const text = document.getElementById('card-text');
+            if(place.text){ text.textContent = place.text; text.style.display='block'; } else { text.style.display='none'; }
+
+            document.getElementById('overlay').style.display='block';
+            document.getElementById('place-card').style.display='block';
+        }
+
+        document.getElementById('close-card').onclick = () => {
+            document.getElementById('overlay').style.display='none';
+            document.getElementById('place-card').style.display='none';
+        };
+    }
+
+    if (!localStorage.getItem("firstLaunchDone")) {
+        splash.style.display = "flex";
+        mapDiv.style.display = "none";
+        setTimeout(()=>{
+            splash.style.display="none";
+            mapDiv.style.display="block";
+            localStorage.setItem("firstLaunchDone","true");
+            initializeMap(places);
+        }, 2000);
+    } else {
+        splash.style.display="none";
+        mapDiv.style.display="block";
+        initializeMap(places);
+    }
+});
+</script>
+
+</body>
+</html>
