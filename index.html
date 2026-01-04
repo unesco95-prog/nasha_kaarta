@@ -43,18 +43,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const splash = document.getElementById("splash");
     const mapDiv = document.getElementById("map");
 
+    // Функция форматирования даты
     function formatDate(dateStr) {
         const months = [
             "января", "февраля", "марта", "апреля", "мая", "июня",
             "июля", "августа", "сентября", "октября", "ноября", "декабря"
         ];
+        if(!dateStr) return "";
         const parts = dateStr.split("-");
+        if(parts.length !== 3) return dateStr;
         const year = parts[0];
         const month = months[parseInt(parts[1], 10) - 1];
         const day = parseInt(parts[2], 10);
         return `${day} ${month} ${year}`;
     }
 
+    // Инициализация карты и маркеров
     function initializeMap(places) {
         const map = L.map('map').setView([59.9386, 30.3141], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
@@ -66,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
              .on('click', () => openCard(place));
         });
 
+        // Функция открытия карточки
         function openCard(place) {
             document.getElementById('card-title').textContent = place.title;
             document.getElementById('card-date').textContent = formatDate(place.date);
@@ -101,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
+    // Splash при первом запуске
     if (!localStorage.getItem("firstLaunchDone")) {
         splash.style.display = "flex";
         mapDiv.style.display = "none";
