@@ -4,34 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Наша карта</title>
-
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-
-<!-- Leaflet CDN -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 
+<!-- Splash -->
 <div id="splash">
   <div class="splash-heart">❤️</div>
-  <div class="splash-text">Я сделал это для тебя</div>
+  <div class="splash-text">История нашей любви</div>
 </div>
 
+<!-- Карта -->
 <div id="map"></div>
 
+<!-- Overlay и карточка -->
 <div id="overlay"></div>
 <div id="place-card">
   <button id="close-card">×</button>
   <h2 id="card-title"></h2>
   <div id="card-date"></div>
-  <img id="card-photo"/>
+  <div id="card-slider">
+    <button id="prev-photo">◀</button>
+    <img id="card-photo"/>
+    <button id="next-photo">▶</button>
+  </div>
   <p id="card-text"></p>
 </div>
 
-<!-- Массив places с base64 фото -->
+<!-- Данные -->
 <script src="photos_base64.js"></script>
 
 <script>
@@ -53,12 +57,26 @@ document.addEventListener("DOMContentLoaded", () => {
         function openCard(place) {
             document.getElementById('card-title').textContent = place.title;
             document.getElementById('card-date').textContent = place.date;
+            document.getElementById('card-text').textContent = place.text || "";
 
-            const photo = document.getElementById('card-photo');
-            if(place.photo){ photo.src = place.photo; photo.style.display='block'; } else { photo.style.display='none'; }
+            let index = 0;
+            const imgEl = document.getElementById('card-photo');
 
-            const text = document.getElementById('card-text');
-            if(place.text){ text.textContent = place.text; text.style.display='block'; } else { text.style.display='none'; }
+            if(place.photos && place.photos.length > 0){
+                imgEl.src = place.photos[index];
+                document.getElementById('card-slider').style.display = 'flex';
+            } else {
+                document.getElementById('card-slider').style.display = 'none';
+            }
+
+            document.getElementById('prev-photo').onclick = () => {
+                index = (index - 1 + place.photos.length) % place.photos.length;
+                imgEl.src = place.photos[index];
+            };
+            document.getElementById('next-photo').onclick = () => {
+                index = (index + 1) % place.photos.length;
+                imgEl.src = place.photos[index];
+            };
 
             document.getElementById('overlay').style.display='block';
             document.getElementById('place-card').style.display='block';
