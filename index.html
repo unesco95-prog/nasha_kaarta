@@ -43,6 +43,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const splash = document.getElementById("splash");
     const mapDiv = document.getElementById("map");
 
+    function formatDate(dateStr) {
+        const months = [
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+        ];
+        const parts = dateStr.split("-");
+        const year = parts[0];
+        const month = months[parseInt(parts[1], 10) - 1];
+        const day = parseInt(parts[2], 10);
+        return `${day} ${month} ${year}`;
+    }
+
     function initializeMap(places) {
         const map = L.map('map').setView([59.9386, 30.3141], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
@@ -56,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function openCard(place) {
             document.getElementById('card-title').textContent = place.title;
-            document.getElementById('card-date').textContent = place.date;
+            document.getElementById('card-date').textContent = formatDate(place.date);
             document.getElementById('card-text').textContent = place.text || "";
 
             const slider = document.getElementById('card-slider');
