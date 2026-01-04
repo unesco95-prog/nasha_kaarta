@@ -59,24 +59,25 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('card-date').textContent = place.date;
             document.getElementById('card-text').textContent = place.text || "";
 
-            let index = 0;
+            const slider = document.getElementById('card-slider');
             const imgEl = document.getElementById('card-photo');
+            let index = 0;
 
             if(place.photos && place.photos.length > 0){
+                slider.style.display = 'flex';
                 imgEl.src = place.photos[index];
-                document.getElementById('card-slider').style.display = 'flex';
-            } else {
-                document.getElementById('card-slider').style.display = 'none';
-            }
 
-            document.getElementById('prev-photo').onclick = () => {
-                index = (index - 1 + place.photos.length) % place.photos.length;
-                imgEl.src = place.photos[index];
-            };
-            document.getElementById('next-photo').onclick = () => {
-                index = (index + 1) % place.photos.length;
-                imgEl.src = place.photos[index];
-            };
+                document.getElementById('prev-photo').onclick = () => {
+                    index = (index - 1 + place.photos.length) % place.photos.length;
+                    imgEl.src = place.photos[index];
+                };
+                document.getElementById('next-photo').onclick = () => {
+                    index = (index + 1) % place.photos.length;
+                    imgEl.src = place.photos[index];
+                };
+            } else {
+                slider.style.display = 'none';
+            }
 
             document.getElementById('overlay').style.display='block';
             document.getElementById('place-card').style.display='block';
